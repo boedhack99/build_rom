@@ -1,0 +1,42 @@
+install:
+  - sudo apt install bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
+  
+  os: linux
+  dist: bionic
+  language: generic
+  sudo: required
+  git:
+    depth: 1
+  addons:
+    apt:
+      update:
+        - true
+services:
+  - docker
+before_install:
+  - echo "{$PASS}" | docker login -u "boedhack99" --password-stdin 2>/dev/null
+  - docker pull {$DOCKER}
+sudo: false
+script:
+  - bash build.sh
+before_deploy:
+  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d-%H%M')}
+  - export RELEASE_NAME=mojito
+  - git tag $TRAVIS_TAG
+deploy:
+    skip_cleanup: true
+    provider: releases
+    # The secret api_key will be loaded from the environment variables
+    api_key: {$GTOKEN}
+    file_glob: true
+  file: /home/travis/rom/out/target/product/mojito/*.zip
+    on:
+      tags: false
+      repo: boedhack/device_mojito
+      branch: R
+  branches:
+    only:
+      - R
+    except:
+      - /^(?i:untagged)-.*$/
+      - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
