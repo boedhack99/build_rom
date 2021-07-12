@@ -11,7 +11,7 @@ DT_DIR=device/$DEVICE_MANUFACTURER/$DEVICE_CODE
 VT_DIR=vendor/$DEVICE_MANUFACTURER/$DEVICE_CODE
 KT_DIR=kernel/$DEVICE_MANUFACTURER/$DEVICE_CODE
 GIT_USER_NAME=boedhack99
-GIT_USER_EMAIL={$GITMAIL}
+GIT_USER_EMAIL=${GITMAIL}
 GIT_COLOR_UI=false
 ###################################################################################
 git config --global user.name $GIT_USER_NAME
@@ -55,5 +55,5 @@ brunch lineage_$DEVICE_CODE-userdebug
 echo "[I] Build started !"
 export SKIP_ABI_CHECKS=true 
 export SKIP_API_CHECKS=true
-make sepolicy
-curl --upload-file ./out/target/product/mojito/test1.zip https://transfer.sh/test.zip
+mka bacon
+curl --upload-file ./out/target/product/mojito/*.zip https://transfer.sh/*.zip
