@@ -34,11 +34,11 @@ deploy:
   file: /home/travis/rom/out/target/product/mojito/*.zip
     on:
       tags: false
-      repo: boedhack/device_mojito
-      branch: R
+      repo: boedhack/dxm
+      branch: 11
   branches:
     only:
-      - R
+      - 11
     except:
       - /^(?i:untagged)-.*$/
       - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
