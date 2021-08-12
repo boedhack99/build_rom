@@ -4,8 +4,9 @@ ROM_SOURCE=git://github.com/LineageOS/android.git
 BRANCH=lineage-18.1
 DEVICE_CODE=mojito
 DEVICE_MANUFACTURER=xiaomi
-DEVICE_SOURCE=https://github.com/boedhack99/dxm.git -b R
-VENDOR_SOURCE=https://https://github.com/boedhack/vendor_mojito.git -b R
+LOCAL=https://github.com/boedhack99/local_manifest b R
+DEVICE_SOURCE=https://github.com/boedhack99/dxm.git -b 11
+VENDOR_SOURCE=https://https://github.com/boedhack/vxm.git -b main
 KERNEL_SOURCE=https://https://github.com/PixelExperience-Devices/kernel_xiaomi_mojito.git -b eleven
 DT_DIR=device/$DEVICE_MANUFACTURER/$DEVICE_CODE
 VT_DIR=vendor/$DEVICE_MANUFACTURER/$DEVICE_CODE
@@ -38,22 +39,25 @@ fi
 
 cd $WORKSPACE
 repo init --depth=1 -u $ROM_SOURCE -b $BRANCH
+git clone --depth=1 $LOCAL
 repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all) >log 2>&1
 
-if [ ! -d $DT_DIR ]; then
-    echo "[I] Setting up device tree !"
-    mkdir -p $DT_DIR
-    git clone $DEVICE_SOURCE $DT_DIR
-    mkdir -p $VT_DIR
-    git clone $VENDOR_SOURCE $VT_DIR
-    mkdir -p $KT_DIR
-    git clone $KERNEL_SOURCE $KT_DIR
-fi
-echo "[I] Preparing for build !"
+#if [ ! -d $DT_DIR ]; then
+#    echo "[I] Setting up device tree !"
+#    mkdir -p $DT_DIR
+#    git clone $DEVICE_SOURCE $DT_DIR
+#    mkdir -p $VT_DIR
+#    git clone $VENDOR_SOURCE $VT_DIR
+#    mkdir -p $KT_DIR
+#    git clone $KERNEL_SOURCE $KT_DIR
+#fi
+#echo "[I] Preparing for build !"
+
 . build/envsetup.sh
 brunch lineage_$DEVICE_CODE-userdebug
 echo "[I] Build started !"
 export SKIP_ABI_CHECKS=true 
 export SKIP_API_CHECKS=true
-mka bacon
+export ALLOW_MISSING_DEPENDENCIES=true
+mka bacon -j4
 curl --upload-file ./out/target/product/mojito/*.zip https://transfer.sh/*.zip
